@@ -131,10 +131,14 @@ router
       return res.status(422).json({ message: "Id du livre manquant" });
 
     const { returnDate } = req.body;
-    if (!returnDate)
+    if (
+      !returnDate ||
+      new Date(returnDate) > new Date().getTime() + 30 * 24 * 3600 * 1000 ||
+      new Date(returnDate) < new Date()
+    )
       return res
         .status(422)
-        .json({ message: "Date de retour du livre manquante" });
+        .json({ message: "Date de retour du livre manquante ou invalide" });
 
     await borrowBook(req.user.id, bookId, returnDate, (err) => {
       if (err) {
