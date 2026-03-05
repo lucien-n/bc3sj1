@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../services/database");
 const { authenticateToken } = require("../middlewares/auth");
+const { borrowBook } = require("../services/books.service");
 
 router
 
@@ -87,6 +88,31 @@ router
     db.query(sql, [req.params.id], (err) => {
       if (err) throw err;
       res.send("Livre supprimé");
+    });
+  })
+
+  /**
+   * @param {import("Express").Request} req
+   * @param {import("Express").Response} res
+   */
+  .post("/borrow/:id", authenticateToken, async (req, res) => {
+    const bookId = req.params.id;
+    if (!bookId)
+      return res.status(422).json({ message: "Id du livre manquant" });
+
+    const { returnDate } = req.body;
+    if (!returnDate)
+      return res
+        .status(422)
+        .json({ message: "Date de retour du livre manquante" });
+
+    await borrowBook(req.user.id, bookId, returnDate, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Erreur interne" });
+      }
+
+      return res.sendStatus(200);
     });
   });
 

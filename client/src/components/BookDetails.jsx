@@ -21,7 +21,7 @@ const BookDetails = () => {
     })
       .then((response) => response.json())
       .then((data) => setUserRole(data.role))
-      .catch((error) => setUserRole("Guest"));
+      .catch(() => setUserRole("Guest"));
   }, [bookId]);
 
   const handleBack = () => {
@@ -36,13 +36,16 @@ const BookDetails = () => {
     console.log("Supprimer le livre:", bookId);
   };
 
-  const handleBorrow = () => {};
+  const handleBorrow = () => {
+    navigate(`/borrow/${bookId}`);
+  };
 
   if (!book) {
     return <p>Livre non trouvé</p>;
   }
 
-  const isAvailable = book.statut === "disponible";
+  const isBookAvailable = book.statut === "disponible";
+  const isUserAuthenticated = userRole !== "Gust";
 
   return (
     <div className="container">
@@ -55,7 +58,9 @@ const BookDetails = () => {
         <p>URL de l'image : {book.photo_url}</p>
       </div>
       <div className="back-button">
-        {isAvailable && <button onClick={handleBorrow}>Emprunter</button>}
+        {isBookAvailable && isUserAuthenticated && (
+          <button onClick={handleBorrow}>Emprunter</button>
+        )}
         <button onClick={handleBack}>Retour à la liste des livres</button>
         {userRole === "admin" && (
           <>

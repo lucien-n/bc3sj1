@@ -30,7 +30,7 @@ USE library;
 --
 
 CREATE TABLE `livres` (
-  `id` int NOT NULL,
+  `id` int PRIMARY KEY,
   `titre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `auteur` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `date_publication` date NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE `livres` (
 
 INSERT INTO `livres` (`id`, `titre`, `auteur`, `date_publication`, `isbn`, `description`, `statut`, `photo_url`) VALUES
 (1, 'Developpement Web mobile avec HTML, CSS et JavaScript Pour les Nuls', 'William HARREL', '2023-11-09', 'DHIDZH1374R', 'Un livre indispensable ï¿½ tous les concepteurs ou dï¿½veloppeurs de sites Web pour iPhone, iPad, smartphones et tablettes !Ce livre est destinï¿½ aux dï¿½veloppeurs qui veulent crï¿½er un site Internet destinï¿½ aux plate-formes mobiles en adoptant les standard du Web que sont HTML, XHTML, les CSS et JavaScript.', 'emprunté', 'https://cdn.cultura.com/cdn-cgi/image/width=180/media/pim/82_metadata-image-20983225.jpeg'),
-(4, 'PHP et MySql pour les Nuls ', 'Janet VALADE', '2023-11-14', '23R32R2R4', 'Le livre best-seller sur PHP & MySQL !\r\n\r\n\r\nAvec cette 5e ï¿½dition de PHP et MySQL pour les Nuls, vous verrez qu\'il n\'est plus nï¿½cessaire d\'ï¿½tre un as de la programmation pour dï¿½velopper des sites Web dynamiques et interactifs.\r\n', 'disponible', ' https://cdn.cultura.com/cdn-cgi/image/width=830/media/pim/66_metadata-image-20983256.jpeg');
+(4, 'PHP et MySql pour les Nuls ', 'Janet VALADE', '2023-11-14', '23R32R2R4', "Le livre best-seller sur PHP & MySQL !\r\n\r\n\r\nAvec cette 5e ï¿½dition de PHP et MySQL pour les Nuls, vous verrez qu'il n'est plus nï¿½cessaire d'ï¿½tre un as de la programmation pour dï¿½velopper des sites Web dynamiques et interactifs.\r\n", 'disponible', ' https://cdn.cultura.com/cdn-cgi/image/width=830/media/pim/66_metadata-image-20983256.jpeg');
 
 -- --------------------------------------------------------
 
@@ -55,7 +55,7 @@ INSERT INTO `livres` (`id`, `titre`, `auteur`, `date_publication`, `isbn`, `desc
 --
 
 CREATE TABLE `utilisateurs` (
-  `id` int NOT NULL,
+  `id` int PRIMARY KEY,
   `nom` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `prenom` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -72,21 +72,27 @@ INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `email`, `mot_de_passe`, `dat
 (1, 'Smith', 'John', 'john@smith.com', '$2b$10$6UQGsRHPMkIjH.1RqeTN/Oo4XRCXwBJEBdOb9lNjddbRIIj3/Olk6', '2023-11-09 21:54:09', 'admin'),
 (2, 'Lord', 'Marc', 'marc@lord.com', '$2b$10$6UQGsRHPMkIjH.1RqeTN/Oo4XRCXwBJEBdOb9lNjddbRIIj3/Olk6', '2023-11-09 21:59:23', 'utilisateur');
 
---
--- Index pour les tables déchargées
---
+-- --------------------------------------------------------
 
 --
--- Index pour la table `livres`
+-- Structure de la table `emprunts`
 --
-ALTER TABLE `livres`
-  ADD PRIMARY KEY (`id`);
 
---
--- Index pour la table `utilisateurs`
---
-ALTER TABLE `utilisateurs`
-  ADD PRIMARY KEY (`id`);
+CREATE TABLE `emprunts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+
+  `date_emprunt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_retour_effective` TIMESTAMP DEFAULT NULL,
+  `date_retour_prevue` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL 30 DAY),
+
+  `utilisateur_id` INT NOT NULL,
+  `livre_id` INT NOT NULL,
+
+  FOREIGN KEY (`utilisateur_id`) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+  FOREIGN KEY (`livre_id`) REFERENCES livres(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- AUTO_INCREMENT pour les tables déchargées

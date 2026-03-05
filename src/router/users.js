@@ -6,6 +6,8 @@ const db = require("../services/database");
 const { authenticateToken } = require("../middlewares/auth");
 const { JWT_SECRET } = require("../env");
 
+const DUMMY_HASH = "$2a$10$abcdefghijklmnopqrstuvwxyzabcdefghi";
+
 function isAdmin(req, res, next) {
   if (req.user.role !== "admin") {
     return res.status(403).send("Accès interdit");
@@ -57,14 +59,16 @@ router
 
   .post("/login", (req, res) => {
     const { email, password } = req.body;
+
     const sql = "SELECT * FROM utilisateurs WHERE email = ?";
     db.query(sql, [email], async (err, results) => {
       if (err) throw err;
-      if (results.length === 0) {
-        return res.status(400).send("Utilisateur non trouvé");
-      }
+
       const user = results[0];
-      const isMatch = await bcrypt.compare(password, user.mot_de_passe);
+      const isMatch = await bcrypt.compare(
+        password,
+        user.mot_de_passe ?? DUMMY_HASH,
+      );
       if (!isMatch) {
         return res.status(400).send("Mot de passe incorrect");
       }
