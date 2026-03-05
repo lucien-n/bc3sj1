@@ -21,7 +21,6 @@ SET time_zone = "+00:00";
 -- Base de données : `library`
 --
 CREATE DATABASE IF NOT EXISTS library;
-CREATE USER 'libr'@'%' IDENTIFIED BY 'NIEN97BF21OZEFJOZEO';
 GRANT ALL PRIVILEGES ON library.* TO 'libr'@'%' WITH GRANT OPTION;
 USE library;
 -- --------------------------------------------------------

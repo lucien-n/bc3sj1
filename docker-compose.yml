@@ -1,0 +1,19 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: libr_mysql_dev
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: false
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_HOST: ${DB_HOST}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./config:/docker-entrypoint-initdb.d/:ro
+
+volumes:
+  mysql_data:
