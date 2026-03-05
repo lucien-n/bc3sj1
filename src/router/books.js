@@ -69,7 +69,7 @@ router
       ],
       (err) => {
         if (err) res.status(400).send("Erreur d'envoi");
-        res.send("Livre ajouté");
+        res.status(204).send("Livre ajouté");
       },
     );
   })
