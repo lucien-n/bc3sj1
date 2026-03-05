@@ -17,6 +17,7 @@ const BorrowedBooksList = () => {
 
     try {
       await confirmBookReturn(bookId);
+      navigate(0);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Une erreur est survenue");
     }
@@ -39,8 +40,7 @@ const BorrowedBooksList = () => {
       </thead>
       <tbody>
         {borrowedBooks.map((item) => {
-          console.log(item);
-          const isBorrowed = item.statut === "emprunté";
+          const isBorrowed = !item.date_retour_effective;
 
           return (
             <tr key={item.id}>
@@ -48,7 +48,7 @@ const BorrowedBooksList = () => {
               <td>{new Date(item.date_emprunt).toLocaleDateString()}</td>
               <td>{new Date(item.date_retour_prevue).toLocaleDateString()}</td>
               <td>
-                {item.date_retour_effective
+                {!isBorrowed
                   ? "Rendu"
                   : new Date(item.date_retour_prevue) < new Date()
                     ? "⚠️ En retard"
