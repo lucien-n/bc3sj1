@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../services/database");
 const { authenticateToken } = require("../middlewares/auth");
+const { JWT_SECRET } = require("../env");
 
 function isAdmin(req, res, next) {
   if (req.user.role !== "admin") {
