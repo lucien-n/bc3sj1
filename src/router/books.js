@@ -36,7 +36,7 @@ router
         cover,
       ],
       (err) => {
-        if (err) res.staus(400).send("Erreur d'envoi");
+        if (err) res.status(400).send("Erreur d'envoi");
         res.send("Livre ajouté");
       },
     );
