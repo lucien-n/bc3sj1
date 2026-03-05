@@ -20,3 +20,21 @@ export const fetchBorrowedBooks = async () => {
 
   return [];
 };
+
+/**
+ * @async
+ * @param {string} bookId
+ */
+export const confirmBookReturn = async (bookId) => {
+  try {
+    const res = await fetch(base + "api/books/return/" + bookId, {
+      credentials: "include",
+      method: "POST",
+    });
+
+    if (res.status !== 200 || !res.ok)
+      throw new Error(res.statusText ?? "Erreur lors du retour");
+  } catch (err) {
+    console.error(err);
+  }
+};

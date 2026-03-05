@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const db = require("../services/database");
 const { authenticateToken } = require("../middlewares/auth");
-const { borrowBook, getBorrowedBooks } = require("../services/books.service");
+const {
+  borrowBook,
+  getBorrowedBooksByUser: getBorrowedBooks,
+  returnBook,
+} = require("../services/books.service");
 
 router
 
@@ -24,6 +28,19 @@ router
       }
 
       return res.status(200).json({ books });
+    });
+  })
+
+  .post("/return/:bookId", authenticateToken, async (req, res) => {
+    const bookId = req.params.bookId;
+
+    await returnBook(bookId, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Erreur interne" });
+      }
+
+      return res.sendStatus(200);
     });
   })
 

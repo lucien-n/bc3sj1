@@ -56,10 +56,10 @@ const borrowBook = async (userId, bookId, returnDate, callback) => {
  * @param {string} userId
  * @param {(err: Error | null, books: any[]) => void} callback
  */
-const getBorrowedBooks = async (userId, callback) => {
+const getBorrowedBooksByUser = async (userId, callback) => {
   db.query(
     `
-    SELECT e.*, l.titre
+    SELECT e.*, l.titre, l.statut
     FROM emprunts e
     JOIN livres l ON e.livre_id = l.id
     WHERE e.utilisateur_id = ?
@@ -74,7 +74,49 @@ const getBorrowedBooks = async (userId, callback) => {
   );
 };
 
+/**
+ * @async
+ * @param {string} bookId
+ * @param {(err: Error | null) => void} callback
+ * @returns {Promise}
+ */
+const returnBook = (bookId, callback) => {
+  db.beginTransaction((err) => {
+    if (err) return callback(err);
+
+    db.query(
+      `
+      UPDATE emprunts 
+      SET date_retour_effective = CURRENT_TIMESTAMP 
+      WHERE livre_id = ? AND date_retour_effective IS NULL
+      `,
+      [bookId],
+      (err, result) => {
+        if (err || !result.affectedRows)
+          return db.rollback(() =>
+            callback(err || new Error("Aucun emprunt actif trouvé")),
+          );
+
+        db.query(
+          "UPDATE livres SET statut = 'disponible' WHERE id = ?",
+          [bookId],
+          (err) => {
+            if (err) return db.rollback(() => callback(err));
+
+            db.commit((err) => {
+              if (err) return db.rollback(() => callback(err));
+
+              callback(null);
+            });
+          },
+        );
+      },
+    );
+  });
+};
+
 module.exports = {
   borrowBook,
-  getBorrowedBooks,
+  getBorrowedBooksByUser,
+  returnBook,
 };

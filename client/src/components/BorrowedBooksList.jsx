@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchBorrowedBooks } from "../api/books";
+import { confirmBookReturn, fetchBorrowedBooks } from "../api/books";
 
 const BorrowedBooksList = () => {
   /** @type {[Array,  React.Dispatch<React.SetStateAction<Array>>]} */
@@ -10,6 +10,17 @@ const BorrowedBooksList = () => {
   useEffect(() => {
     fetchBorrowedBooks().then(setBorrowedBooks);
   }, []);
+
+  /** @param {string} bookId */
+  const handleReturn = async (bookId) => {
+    if (!window.confirm("Vous confirmez avoir retourné le livre ?")) return;
+
+    try {
+      await confirmBookReturn(bookId);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Une erreur est survenue");
+    }
+  };
 
   if (!borrowedBooks || !borrowedBooks.length)
     return "Vous n'avez encore emprunté aucun livre";
@@ -23,28 +34,41 @@ const BorrowedBooksList = () => {
           <th>Retour prévu</th>
           <th>Statut</th>
           <th>Détails</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        {borrowedBooks.map((item) => (
-          <tr key={item.id}>
-            <td>{item.titre}</td>
-            <td>{new Date(item.date_emprunt).toLocaleDateString()}</td>
-            <td>{new Date(item.date_retour_prevue).toLocaleDateString()}</td>
-            <td>
-              {item.date_retour_effective
-                ? "Rendu"
-                : new Date(item.date_retour_prevue) < new Date()
-                  ? "⚠️ En retard"
-                  : "En cours"}
-            </td>
-            <td>
-              <button onClick={() => navigate(`/book/${item.livre_id}`)}>
-                Voir les détails
-              </button>
-            </td>
-          </tr>
-        ))}
+        {borrowedBooks.map((item) => {
+          console.log(item);
+          const isBorrowed = item.statut === "emprunté";
+
+          return (
+            <tr key={item.id}>
+              <td>{item.titre}</td>
+              <td>{new Date(item.date_emprunt).toLocaleDateString()}</td>
+              <td>{new Date(item.date_retour_prevue).toLocaleDateString()}</td>
+              <td>
+                {item.date_retour_effective
+                  ? "Rendu"
+                  : new Date(item.date_retour_prevue) < new Date()
+                    ? "⚠️ En retard"
+                    : "En cours"}
+              </td>
+              <td>
+                <button onClick={() => navigate(`/book/${item.livre_id}`)}>
+                  Voir les détails
+                </button>
+              </td>
+              <td>
+                {isBorrowed && (
+                  <button onClick={() => handleReturn(item.livre_id)}>
+                    Rendu
+                  </button>
+                )}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
