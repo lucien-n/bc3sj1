@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const base = import.meta.env.VITE_BASE_URL || "/";
 
-const BorrowBook = () => {
+const BorrowBookPage = () => {
   const { bookId } = useParams();
   const navigate = useNavigate();
   const [bookForm, setBookForm] = useState({
@@ -76,4 +76,4 @@ const BorrowBook = () => {
   );
 };
 
-export default BorrowBook;
+export default BorrowBookPage;

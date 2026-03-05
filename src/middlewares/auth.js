@@ -8,8 +8,17 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
+
     next();
   });
 }
 
-module.exports = { authenticateToken };
+function isAdmin(req, res, next) {
+  if (req.user.role !== "admin") {
+    return res.status(403).send("Accès interdit");
+  }
+
+  next();
+}
+
+module.exports = { authenticateToken, isAdmin };

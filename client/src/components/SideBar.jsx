@@ -1,35 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { fetchSession } from "../api/session";
 import "./../styles/sidebar.css";
-const base = import.meta.env.VITE_BASE_URL || "/";
 
 const Sidebar = ({ userT }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch(base + "api/session", {
-      credentials: "include",
-    })
-      .then((response) => {
-        if (response.status === 200) return response.json();
-        else throw new Error("Account not found");
-      })
-      .then((data) => {
-        setUser(data.user);
-      })
-      .catch((error) => setUser(null));
+    fetchSession().then(setUser);
   }, []);
-  useEffect(() => {
-    fetch(base + "api/session", {
-      credentials: "include",
-    })
-      .then((response) => {
-        if (response.status === 200) return response.json();
-        else throw new Error("Account not found");
-      })
-      .then((data) => setUser(data.user))
-      .catch((error) => setUser(null));
-  }, [userT]);
 
   const handleLogout = () => {
     fetch(base + "api/logout", {

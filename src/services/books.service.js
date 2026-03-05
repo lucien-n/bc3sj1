@@ -51,6 +51,30 @@ const borrowBook = async (userId, bookId, returnDate, callback) => {
   );
 };
 
+/**
+ * @async
+ * @param {string} userId
+ * @param {(err: Error | null, books: any[]) => void} callback
+ */
+const getBorrowedBooks = async (userId, callback) => {
+  db.query(
+    `
+    SELECT e.*, l.titre
+    FROM emprunts e
+    JOIN livres l ON e.livre_id = l.id
+    WHERE e.utilisateur_id = ?
+    ORDER BY e.date_emprunt DESC;
+    `,
+    [userId],
+    (err, result) => {
+      if (err) return callback(err, []);
+
+      callback(null, result);
+    },
+  );
+};
+
 module.exports = {
   borrowBook,
+  getBorrowedBooks,
 };

@@ -3,17 +3,10 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../services/database");
-const { authenticateToken } = require("../middlewares/auth");
+const { authenticateToken, isAdmin } = require("../middlewares/auth");
 const { JWT_SECRET } = require("../env");
 
 const DUMMY_HASH = "$2a$10$abcdefghijklmnopqrstuvwxyzabcdefghi";
-
-function isAdmin(req, res, next) {
-  if (req.user.role !== "admin") {
-    return res.status(403).send("Accès interdit");
-  }
-  next();
-}
 
 router
   .get("/", authenticateToken, isAdmin, (_, res) => {

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../services/database");
 const { authenticateToken } = require("../middlewares/auth");
-const { borrowBook } = require("../services/books.service");
+const { borrowBook, getBorrowedBooks } = require("../services/books.service");
 
 router
 
@@ -11,6 +11,19 @@ router
     db.query(sql, (err, results) => {
       if (err) throw err;
       res.json(results);
+    });
+  })
+
+  .get("/user-borrowed", authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+
+    await getBorrowedBooks(userId, (err, books) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Erreur interne" });
+      }
+
+      return res.status(200).json({ books });
     });
   })
 

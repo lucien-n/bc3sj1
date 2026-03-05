@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const booksrouter = require("./router/books");
+const booksRouter = require("./router/books");
 const usersRouter = require("./router/users");
 const cors = require("cors");
 const path = require("path");
@@ -20,7 +20,7 @@ router
   .use(bodyParser.json())
   .use(cors(corsOptions))
   .use(cookieParser())
-  .use("/api/books", booksrouter)
+  .use("/api/books", booksRouter)
   .use("/api/users", usersRouter);
 
 router.post("/api/logout", (req, res) => {

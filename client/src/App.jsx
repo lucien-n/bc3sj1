@@ -3,10 +3,11 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import AddBook from "./components/AddABook";
 import BookDetails from "./components/BookDetails";
 import BookList from "./components/BookList.jsx";
-import BorrowBook from "./components/BorrowBook.jsx";
+import BorrowBookPage from "./components/BorrowBook.page.jsx";
 import DashBoard from "./components/DashBoard.jsx";
 import EditBook from "./components/EditBook";
 import Login from "./components/Login.jsx";
+import ProfilePage from "./components/Profile.page.jsx";
 import Register from "./components/Register.jsx";
 import Template from "./components/Template.jsx";
 import "./style.css";
@@ -52,6 +53,14 @@ function App() {
           }
         />
         <Route
+          path="/profile"
+          element={
+            <Template userT={userT} page="Profil">
+              <ProfilePage />
+            </Template>
+          }
+        />
+        <Route
           path="/books"
           element={
             <Template userT={userT}>
@@ -87,7 +96,7 @@ function App() {
           path="/borrow/:bookId"
           element={
             <Template userT={userT} page="Emprunt du livre">
-              <BorrowBook />
+              <BorrowBookPage />
             </Template>
           }
         />
