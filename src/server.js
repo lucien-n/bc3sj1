@@ -5,20 +5,8 @@ const usersRouter = require("./router/users");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const db = require("./services/database");
-
-const JWT_SECRET = "HelloThereImObiWan"; // todo: env
-function authenticateToken(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
+const { authenticateToken } = require("./middlewares/auth");
 
 const corsOptions = {
   origin: "https://exam.andragogy.fr", // todo: env
@@ -28,11 +16,12 @@ const corsOptions = {
 };
 
 const router = express.Router();
-router.use(bodyParser.json());
-router.use(cors(corsOptions));
-router.use(cookieParser());
-router.use("/api/books", booksrouter);
-router.use("/api/users", usersRouter);
+router
+  .use(bodyParser.json())
+  .use(cors(corsOptions))
+  .use(cookieParser())
+  .use("/api/books", booksrouter)
+  .use("/api/users", usersRouter);
 
 router.post("/api/logout", (req, res) => {
   req.session.destroy();

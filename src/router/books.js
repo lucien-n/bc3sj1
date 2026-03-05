@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../services/database");
+const { authenticateToken } = require("../middlewares/auth");
 
 router
 
@@ -12,7 +13,7 @@ router
     });
   })
 
-  .post("/", (req, res) => {
+  .post("/", authenticateToken, (req, res) => {
     const {
       title,
       author,

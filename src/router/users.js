@@ -3,19 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../services/database");
-
-const JWT_SECRET = "HelloThereImObiWan";
-
-function authenticateToken(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
+const { authenticateToken } = require("../middlewares/auth");
 
 function isAdmin(req, res, next) {
   if (req.user.role !== "admin") {
